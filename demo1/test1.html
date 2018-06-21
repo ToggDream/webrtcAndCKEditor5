@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <video style="border: solid 1px red" id="webcam"></video>
+</head>
+<body>
+<script type="text/javascript">
+    /**下面的代码用于检查浏览器是否支持getUserMedia方法。**/
+    navigator.getUserMedia  = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+    //音频对象
+    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+
+    var context = new AudioContext();//音频对象
+
+    if (navigator.getUserMedia) {
+        // 支持
+        console.log('浏览器支持');
+    } else {
+        // 不支持
+        console.log('浏览器不支持');
+    }
+
+    var hdConstraints = {
+        video: {
+            mandatory: {
+                minWidth: 1280,
+                minHeight: 720
+            }
+        }
+    };
+    //navigator.getUserMedia(hdConstraints, onSuccess, onError);
+    function onSuccess(stream) {
+        var video = document.querySelector("video");
+        //展现视频
+        if (window.URL) {
+            video.src = window.URL.createObjectURL(stream);//将这个元素的src属性绑定数据流，摄影头拍摄的图像就可以显示了。
+        } else {
+            video.src = stream;
+        }
+
+        video.autoplay = true;
+        // 或者 video.play();
+        //捕获音频
+        //var audioInput = context.createMediaStreamSource(stream);
+        //audioInput.connect(context.destination);
+    }
+    function onError(error) {
+        console.log('xxx');
+        console.log("navigator.getUserMedia error: ", error);
+    }
+    if (navigator.getUserMedia) {
+        navigator.getUserMedia({video:true},onSuccess,onError);
+    }
+    function Person(name) {
+        this.name = name;
+    }
+    class Person2 {
+        // 构造
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+</script>
+</body>
+</html>

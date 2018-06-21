@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<video style="border: solid 1px red" id="webcam"></video>
+<script>
+    var hdConstraints = {
+        video: {
+            mandatory: {
+                minWidth: 1280,
+                minHeight: 720
+            }
+        }
+    };
+    function onSuccess(stream) {
+        var video = document.querySelector("video");
+        //展现视频
+        if (window.URL) {
+            video.src = window.URL.createObjectURL(stream);//将这个元素的src属性绑定数据流，摄影头拍摄的图像就可以显示了。
+        } else {
+            video.src = stream;
+        }
+
+        video.autoplay = true;
+        // 或者 video.play();
+        //捕获音频
+        //var audioInput = context.createMediaStreamSource(stream);
+        //audioInput.connect(context.destination);
+    }
+    function onError(error) {
+        console.log('xxx');
+        console.log("navigator.getUserMedia error: ", error);
+    }
+
+    var vgaConstraints = {
+        video: {
+            mandatory: {
+                maxWidth: 1920,
+                maxHeight: 1080
+            }
+        }
+    };
+
+    navigator.getUserMedia(vgaConstraints, onSuccess, onError);
+
+
+    var signalingChannel = createSignalingChannel();
+    var pc;
+    var configuration;
+    // run start(true) to initiate a call
+    function start(isCaller) {
+        pc = new RTCPeerConnection(configuration);
+
+        // send any ice candidates to the other peer
+        pc.onicecandidate = function (evt) {
+            signalingChannel.send(JSON.stringify({ "candidate": evt.candidate }));
+        };
+
+        // once remote stream arrives, show it in the remote video element
+        pc.onaddstream = function (evt) {
+            remoteView.src = URL.createObjectURL(evt.stream);
+        };
+
+        // get the local stream, show it in the local video element and send it
+        navigator.getUserMedia({ "audio": true, "video": true }, function (stream) {
+            selfView.src = URL.createObjectURL(stream);
+            pc.addStream(stream);
+
+            if (isCaller)
+                pc.createOffer(gotDescription);
+            else
+                pc.createAnswer(pc.remoteDescription, gotDescription);
+
+            function gotDescription(desc) {
+                pc.setLocalDescription(desc);
+                signalingChannel.send(JSON.stringify({ "sdp": desc }));
+            }
+        });
+    }
+
+    signalingChannel.onmessage = function (evt) {
+        if (!pc)
+            start(false);
+
+        var signal = JSON.parse(evt.data);
+        if (signal.sdp)
+            pc.setRemoteDescription(new RTCSessionDescription(signal.sdp));
+        else
+            pc.addIceCandidate(new RTCIceCandidate(signal.candidate));
+    };
+
+</script>
+</body>
+</html>
