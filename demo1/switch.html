@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>switch</title>
+    <link rel="stylesheet" href="lib/honeySwitch.css">
+</head>
+<body>
+    <span class="switch-off" id="autoSwitch" themeColor="red" ></span>
+    <button onclick="setState()">btn</button>
+<script src="jquery.js"></script>
+<script type="text/javascript" src="lib/honeySwitch.js"></script>
+<script type="text/javascript">
+
+   /* switchEvent("#autoSwitch",
+        function(){
+            console.log('open');
+        },
+        function(){
+            console.log('close');
+        }
+    );*/
+
+    $(function(){
+        switchEvent("#autoSwitch",function(){
+            console.log('xxx');
+        },function(){
+
+        });
+
+    });
+   $('#autoSwitch').attr('class','switch-on')
+    function setState() {
+        $('#autoSwitch').attr('class','switch-on').css({"background-color": "rgb(51, 153, 255)"});
+    }
+</script>
+</body>
+</html>

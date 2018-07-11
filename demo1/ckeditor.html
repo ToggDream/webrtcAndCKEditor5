@@ -37,10 +37,32 @@
     <button class="s-add-text">插入</button>
     <script type="text/javascript">
         ClassicEditor
-            .create( document.querySelector( '#editor' ),{
-
-            })
+            .create( document.querySelector( '#editor' ), {
+                highlight: {
+                    options: [
+                        {
+                            model: 'greenMarker',
+                            class: 'marker-green',
+                            title: 'Green marker',
+                            color: 'var(--ck-highlight-marker-green)',
+                            type: 'marker'
+                        },
+                        {
+                            model: 'redPen',
+                            class: 'pen-red',
+                            title: 'Red pen',
+                            color: 'var(--ck-highlight-pen-red)',
+                            type: 'pen'
+                        }
+                    ]
+                },
+                toolbar: [
+                    'heading', '|', 'bulletedList', 'numberedList', 'highlight', 'undo', 'redo'
+                ]
+            } )
             .then( editor => {
+               // editor.execute( 'highlight', { value: 'yellowMarker' } );
+                editor.execute( 'highlight' );
                 //加载图片适配器
                 editor.plugins.get('FileRepository').createUploadAdapter = (loader)=>{
                     return new UploadImageAdapter(loader);
@@ -51,8 +73,8 @@
                         '            <p>现邀请你参加[项目名称]面试。</p>\n' +
                         '<p></p>' +
                         '            <p>面试日期:[日程日期]</p>\n' +
-                        '            <p>签到时间:[预约时间]</p>\n' +
-                        '            <p>面试地点:[日程地点]</p>\n' +
+                        '            <p style="color: red">签到时间:<span style="font-size: 60px">[预约时间]555</span></p>\n' +
+                        '            <p>面试地点:[日程地点]</p>\n'+'<mark class="pen-red">重做</mark>' +
                         '<p></p>' +
                         '            <p>请携带您的身份证和学生证等相关证件到场。</p>');
                 });
